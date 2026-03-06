@@ -15,6 +15,18 @@ app.use(
   }),
 );
 
+app.get("/api/health", (req, res) => {
+  res.json({
+    message:
+      "Welcome to Sell-E API - Powered by PostgreSQL, Drizzle ORM & Clerk Auth",
+    endpoints: {
+      users: "/api/users",
+      products: "/api/products",
+      comments: "/api/comments",
+    },
+  });
+});
+
 app.listen(ENV.PORT, () => {
   console.log(`Server is running on port ${ENV.PORT}`);
 });

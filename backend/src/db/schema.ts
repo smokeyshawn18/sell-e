@@ -6,8 +6,9 @@ import {
   uuid,
   boolean,
   unique,
+  type AnyPgColumn,
 } from "drizzle-orm/pg-core";
-import type { AnyPgColumn } from "drizzle-orm/pg-core";
+
 import { relations } from "drizzle-orm";
 
 // ─── Tables ───────────────────────────────────────────────────────────────────

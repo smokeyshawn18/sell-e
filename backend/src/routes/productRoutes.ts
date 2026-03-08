@@ -14,7 +14,7 @@ router.get("/my", requireAuth(), productController.getMyProducts);
 router.get("/:id", productController.getProductById);
 
 // POST /api/products - Create new product (protected)
-router.post("/", productController.createProduct);
+router.post("/", requireAuth(), productController.createProduct);
 
 // PUT /api/products/:id - Update product (protected - owner only)
 router.put("/:id", requireAuth(), productController.updateProduct);
@@ -26,8 +26,8 @@ router.delete("/:id", requireAuth(), productController.deleteProduct);
 router.get("/:id/likes", productController.getProductLikes);
 
 // Toggle like for a product
-router.post("/:id/like", productController.toggleLike);
+router.post("/:id/like", requireAuth(), productController.toggleLike);
 
 // Get current user's like status for a product
-router.get("/:id/like/me", productController.getMyLike);
+router.get("/:id/like/me", requireAuth(), productController.getMyLike);
 export default router;

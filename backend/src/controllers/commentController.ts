@@ -41,24 +41,37 @@ export const createReply = async (req: Request, res: Response) => {
   try {
     const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
     const { productId, commentId: parentId } = req.params;
     const { content } = req.body;
+
     if (!content)
       return res.status(400).json({ error: "Reply content is required" });
+
     // verify product exists
     const product = await queries.getProductById(productId as string);
     if (!product) return res.status(404).json({ error: "Product not found" });
+
     // verify parent comment exists
     const parentComment = await queries.getCommentById(parentId as string);
     if (!parentComment)
       return res.status(404).json({ error: "Comment not found" });
+
+    //  SECURITY FIX
+    if (parentComment.productId !== productId) {
+      return res.status(400).json({
+        error: "Parent comment does not belong to this product",
+      });
+    }
+
     const reply = await queries.createComment({
       content,
       userId,
       productId: productId as string,
       parentId: parentId as string,
     });
-    // Notify parent comment owner (not if replying to your own comment)
+
+    // Notify parent comment owner
     if (parentComment.userId !== userId) {
       await queries.createNotification({
         recipientId: parentComment.userId,
@@ -68,6 +81,7 @@ export const createReply = async (req: Request, res: Response) => {
         commentId: reply.id,
       });
     }
+
     res.status(201).json(reply);
   } catch (error) {
     console.error("Error creating reply:", error);

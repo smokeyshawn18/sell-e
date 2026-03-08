@@ -43,15 +43,16 @@ export const createProduct = async (req: Request, res: Response) => {
   try {
     const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
-    const { title, description, imageUrl } = req.body;
-    if (!title || !description || !imageUrl) {
-      res
-        .status(400)
-        .json({ error: "Title, description, and imageUrl are required" });
+    const { title, price, description, imageUrl } = req.body;
+    if (!title || !description || !imageUrl || !price) {
+      res.status(400).json({
+        error: "Title, description, imageUrl, and price are required",
+      });
       return;
     }
     const product = await queries.createProduct({
       title,
+      price,
       description,
       imageUrl,
       userId,
@@ -69,7 +70,7 @@ export const updateProduct = async (req: Request, res: Response) => {
     const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
     const { id } = req.params;
-    const { title, description, imageUrl } = req.body;
+    const { title, price, description, imageUrl } = req.body;
     const existingProduct = await queries.getProductById(id as string);
     if (!existingProduct) {
       res.status(404).json({ error: "Product not found" });
@@ -81,6 +82,7 @@ export const updateProduct = async (req: Request, res: Response) => {
     }
     const product = await queries.updateProduct(id as string, {
       title,
+      price,
       description,
       imageUrl,
     });

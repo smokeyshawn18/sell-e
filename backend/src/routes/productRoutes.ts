@@ -1,22 +1,33 @@
 import { Router } from "express";
-import {
-  getAllProducts,
-  getMyLike,
-  getProductLikes,
-  toggleLike,
-} from "../controllers/productController";
+
+import { requireAuth } from "@clerk/express";
+import * as productController from "../controllers/productController";
 
 const router = Router();
 
-// Get /api/products route which retrieves all products
-router.get("/", getAllProducts);
+router.get("/", productController.getAllProducts);
+
+// GET /api/products/my - Get current user's products (protected)
+router.get("/my", requireAuth(), productController.getMyProducts);
+
+// GET /api/products/:id - Get single product by ID (public)
+router.get("/:id", productController.getProductById);
+
+// POST /api/products - Create new product (protected)
+router.post("/", productController.createProduct);
+
+// PUT /api/products/:id - Update product (protected - owner only)
+router.put("/:id", requireAuth(), productController.updateProduct);
+
+// DELETE /api/products/:id - Delete product (protected - owner only)
+router.delete("/:id", requireAuth(), productController.deleteProduct);
 
 // Get likes for a product
-router.get("/:id/likes", getProductLikes);
+router.get("/:id/likes", productController.getProductLikes);
 
 // Toggle like for a product
-router.post("/:id/like", toggleLike);
+router.post("/:id/like", productController.toggleLike);
 
 // Get current user's like status for a product
-router.get("/:id/like/me", getMyLike);
+router.get("/:id/like/me", productController.getMyLike);
 export default router;

@@ -249,11 +249,11 @@ export const getUnreadNotificationCount = async (userId: string) => {
 };
 
 // Mark a single notification as read
-export const markNotificationAsRead = async (id: string) => {
+export const markNotificationAsRead = async (id: string, userId: string) => {
   const [notification] = await db
     .update(notifications)
     .set({ isRead: true })
-    .where(eq(notifications.id, id))
+    .where(and(eq(notifications.id, id), eq(notifications.recipientId, userId)))
     .returning();
   return notification;
 };
@@ -272,10 +272,10 @@ export const markAllNotificationsAsRead = async (userId: string) => {
     .returning();
 };
 
-export const deleteNotification = async (id: string) => {
+export const deleteNotification = async (id: string, userId: string) => {
   const [notification] = await db
     .delete(notifications)
-    .where(eq(notifications.id, id))
+    .where(and(eq(notifications.id, id), eq(notifications.recipientId, userId)))
     .returning();
   return notification;
 };

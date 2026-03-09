@@ -34,7 +34,10 @@ export const markAsRead = async (req: Request, res: Response) => {
     const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
     const { id } = req.params;
-    const notification = await queries.markNotificationAsRead(id as string);
+    const notification = await queries.markNotificationAsRead(
+      id as string,
+      userId,
+    );
     if (!notification)
       return res.status(404).json({ error: "Notification not found" });
     res.status(200).json(notification);
@@ -63,7 +66,7 @@ export const deleteNotification = async (req: Request, res: Response) => {
     const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
     const { id } = req.params;
-    const notification = await queries.deleteNotification(id as string);
+    const notification = await queries.deleteNotification(id as string, userId);
     if (!notification)
       return res.status(404).json({ error: "Notification not found" });
     res.status(200).json({ message: "Notification deleted successfully" });

@@ -1,10 +1,56 @@
-import { SignInButton } from "@clerk/clerk-react";
+import Navbar from "./components/Navbar";
+import { Navigate, Route, Routes } from "react-router";
+import useUserSync from "./hooks/useUserSync";
+import useAuthReq from "./hooks/useAuthReq";
+
+const HomePage = () => {
+  return <h1>Home Page</h1>;
+};
+
+const ProductPage = () => {
+  return <h1>Product Page</h1>;
+};
+
+const ProfilePage = () => {
+  return <h1>Profile Page</h1>;
+};
+
+const CreatePage = () => {
+  return <h1>Create Page</h1>;
+};
+
+const EditProductPage = () => {
+  return <h1>Edit Product Page</h1>;
+};
 
 function App() {
+  const { isClerkLoaded, isSignedIn } = useAuthReq();
+  useUserSync();
+
+  if (!isClerkLoaded) return null;
+
   return (
-    <>
-      <SignInButton mode="modal" />
-    </>
+    <div className="min-h-screen bg-base-100">
+      <Navbar />
+      <main className="max-w-5xl mx-auto px-4 py-8">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/product/:id" element={<ProductPage />} />
+          <Route
+            path="/profile"
+            element={isSignedIn ? <ProfilePage /> : <Navigate to={"/"} />}
+          />
+          <Route
+            path="/create"
+            element={isSignedIn ? <CreatePage /> : <Navigate to={"/"} />}
+          />
+          <Route
+            path="/edit/:id"
+            element={isSignedIn ? <EditProductPage /> : <Navigate to={"/"} />}
+          />
+        </Routes>
+      </main>
+    </div>
   );
 }
 
